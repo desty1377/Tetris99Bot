@@ -46,5 +46,30 @@ async def leaderboard(ctx, numberOfPlayers = 10):
                 fullMessage += f'{player} - {sortedDict[player] - 99}★★\n'
 
         await ctx.send(fullMessage)
+        
+@client.command(name = 'leaderboardadd')
+@commands.has_permissions(manage_messages = True)
+async def leaderboardadd(ctx, playerName, playerLevelStr):
+    with open('leaderboard.json', 'r+') as f:
+        leaderboardFile = json.load(f)
+    playerLevelInt = -99
+
+    for character in playerLevelStr:
+        if character == '*':
+            playerLevelInt += 99
+
+    if playerLevelStr[2:] == '**':
+        playerLevelInt += int(playerLevelStr[:len(playerLevelStr) - 2])
+    else:
+        playerLevelInt += int(playerLevelStr[:len(playerLevelStr) - 1])
+
+    leaderboardFile[playerName] = playerLevelInt
+    with open('leaderboard.json', 'w') as f:
+        json.dump(leaderboardFile, f)
+
+    if playerLevelInt > 99:
+        await ctx.send(f'{playerName} has been successfully added to the leaderboard with level {playerLevelInt - 99}★★')
+    else:
+        await ctx.send(f'{playerName} has been successfully added to the leaderboard with level {playerLevelInt}★')
 
 client.run(token.strip())
