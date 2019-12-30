@@ -32,7 +32,7 @@ async def ping(ctx):
 
 @client.command(name = 'leaderboard')
 async def leaderboard(ctx):
-    with open('leaderboard.json', 'r+') as f:
+    with open('leaderboard.json', 'r') as f:
         leaderboardFile = json.load(f)
 
         sortedDict = {k: v for k, v in sorted(leaderboardFile.items(), key=lambda item: item[1], reverse=True)}
