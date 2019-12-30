@@ -63,7 +63,7 @@ async def leaderboardadd(ctx, playerName, playerLevelStr):
         if character == '*':
             playerLevelInt += 99
 
-    if playerLevelStr[2:] == '**':
+    if playerLevelStr[-2:] == '**':
         playerLevelInt += int(playerLevelStr[:len(playerLevelStr) - 2])
     else:
         playerLevelInt += int(playerLevelStr[:len(playerLevelStr) - 1])
