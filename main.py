@@ -40,7 +40,10 @@ async def leaderboard(ctx, numberOfPlayers = 10):
         fullMessage = ''
 
         for player in sortedDict:
-            fullMessage += f'{player} - {sortedDict[player]}★\n'
+            if sortedDict[player] < 100:
+                fullMessage += f'{player} - {sortedDict[player]}★\n'
+            else:
+                fullMessage += f'{player} - {sortedDict[player] - 99}★★\n'
 
         await ctx.send(fullMessage)
 
