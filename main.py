@@ -31,7 +31,7 @@ async def ping(ctx):
     await ctx.send(f'{ctx.author.mention} Pong!')
 
 @client.command(name = 'leaderboard')
-async def leaderboard(ctx, numberOfPlayers = 10):
+async def leaderboard(ctx):
     with open('leaderboard.json', 'r+') as f:
         leaderboardFile = json.load(f)
 
@@ -45,7 +45,11 @@ async def leaderboard(ctx, numberOfPlayers = 10):
             else:
                 fullMessage += f'{player} - {sortedDict[player] - 99}★★\n'
 
-        await ctx.send(fullMessage)
+        leaderboardEmbed = discord.Embed(title = 'Tetris 99 Level Leaderboard', color=0xff0000)
+        leaderboardEmbed.set_thumbnail(url='https://bit.ly/37pTkCz')
+        leaderboardEmbed.add_field(name = 'Rankings', value = fullMessage)
+        leaderboardEmbed.set_footer(text = 'Provide a picture in #role-request or #the-watch showing that you are level 20★ or higher and you will be added to this leaderboard!')
+        await ctx.send(embed = leaderboardEmbed)
         
 @client.command(name = 'leaderboardadd')
 @commands.has_permissions(manage_messages = True)
