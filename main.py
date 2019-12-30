@@ -51,7 +51,7 @@ async def leaderboard(ctx):
         leaderboardEmbed.set_footer(text = 'Provide a picture in #role-request or #the-watch showing that you are level 20★ or higher and you will be added to this leaderboard!')
         await ctx.send(embed = leaderboardEmbed)
         
-@client.command(aliases = ['leaderboardadd', 'lbadd'])
+@client.command(name = 'leaderboardadd', aliases = ['lbadd'])
 @commands.has_permissions(manage_messages = True)
 async def leaderboardadd(ctx, playerName, playerLevelStr):
     with open('leaderboard.json', 'r+') as f:
