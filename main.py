@@ -52,38 +52,90 @@ async def leaderboard(ctx):
         await ctx.send(embed = leaderboardEmbed)
         
 @client.command(name = 'leaderboardadd', aliases = ['lbadd'])
-@commands.has_permissions(manage_messages = True)
 async def leaderboardadd(ctx, playerName, playerLevelStr):
-    with open('leaderboard.json', 'r+') as f:
-        leaderboardFile = json.load(f)
-    playerLevelInt = -99
-    playerUpdate = False
-
-    for character in playerLevelStr:
-        if character == '*':
-            playerLevelInt += 99
-
-    if playerLevelStr[-2:] == '**':
-        playerLevelInt += int(playerLevelStr[:len(playerLevelStr) - 2])
+    t99Server = client.get_guild(546595455983943690)
+    leaderboardRole = t99Server.get_role(661271726792900649)
+    if leaderboardRole not in ctx.author.roles:
+        await ctx.send(f'{ctx.author.mention} You do not have permission to use that command.')
     else:
-        playerLevelInt += int(playerLevelStr[:len(playerLevelStr) - 1])
+        with open('leaderboard.json', 'r+') as f:
+            leaderboardFile = json.load(f)
+        playerLevelInt = -99
+        playerUpdate = False
 
-    if playerName in leaderboardFile == True:
-        playerUpdate = True
+        for character in playerLevelStr:
+            if character == '*':
+                playerLevelInt += 99
 
-    leaderboardFile[playerName] = playerLevelInt
-    with open('leaderboard.json', 'w') as f:
-        json.dump(leaderboardFile, f)
-
-    if playerUpdate == False:
-        if playerLevelInt > 99:
-            await ctx.send(f'{playerName} has been successfully added to the leaderboard with level {playerLevelInt - 99}★★')
+        if playerLevelStr[-2:] == '**':
+            playerLevelInt += int(playerLevelStr[:len(playerLevelStr) - 2])
         else:
-            await ctx.send(f'{playerName} has been successfully added to the leaderboard with level {playerLevelInt}★')
+            playerLevelInt += int(playerLevelStr[:len(playerLevelStr) - 1])
+
+        if playerName in leaderboardFile == True:
+            playerUpdate = True
+
+        leaderboardFile[playerName] = playerLevelInt
+        with open('leaderboard.json', 'w') as f:
+            json.dump(leaderboardFile, f)
+
+        if playerUpdate == False:
+            if playerLevelInt > 99:
+                await ctx.send(f'{playerName} has been successfully added to the leaderboard with level {playerLevelInt - 99}★★')
+            else:
+                await ctx.send(f'{playerName} has been successfully added to the leaderboard with level {playerLevelInt}★')
+        else:
+            if playerLevelInt > 99:
+                await ctx.send(f"{playerName}'s level has been updated to {playerLevelInt - 99}★★")
+            else:
+                await ctx.send(f"{playerName}'s level has been updated to {playerLevelInt}★")
+
+
+@client.command(name='leaderboardremove', aliases=['lbremove'])
+async def leaderboardremove(ctx, playerName):
+    t99Server = client.get_guild(546595455983943690)
+    leaderboardRole = t99Server.get_role(661271726792900649)
+    if leaderboardRole not in ctx.author.roles:
+        await ctx.send(f'{ctx.author.mention} You do not have permission to use that command.')
     else:
-        if playerLevelInt > 99:
-            await ctx.send(f"{playerName}'s level has been updated to {playerLevelInt - 99}★★")
+        with open('leaderboard.json', 'r+') as f:
+            leaderboardFile = json.load(f)
+
+        try:
+            del leaderboardFile[playerName]
+        except KeyError:
+            await ctx.send(f'{ctx.author.mention} No player could be found with that name.')
         else:
-            await ctx.send(f"{playerName}'s level has been updated to {playerLevelInt}★")
+            await ctx.send(f'{ctx.author.mention} {playerName} has been removed from the leaderboard.')
+
+
+@client.command(name='countdown', aliases=['cd', 'count'])
+async def countdown(ctx, time):
+    try:
+        time = int(time)
+    except ValueError:
+        await ctx.send(f'{ctx.author.mention} Please input a valid amount of time to count down from.')
+    else:
+        if time <= 2:
+            await ctx.send(f'{ctx.author.mention} Please input a number that is 3 or larger to count down from.')
+        else:
+            leaderboardEmbed = discord.Embed(title = 'Countdown', color=0xff0000)
+            leaderboardEmbed.set_thumbnail(url='https://bit.ly/37pTkCz')
+            leaderboardEmbed.add_field(name = f'Counting down from {time}!', value = 'Countdown begins in 5 seconds! Be ready!')
+            leaderboardMessage = await ctx.send(embed=leaderboardEmbed)
+            await asyncio.sleep(5)
+
+            for i in range(1, time):
+                leaderboardEmbed = discord.Embed(title = 'Countdown', color=0xff0000)
+                leaderboardEmbed.set_thumbnail(url='https://bit.ly/37pTkCz')
+                leaderboardEmbed.add_field(name = f'Counting down from {time}!', value = f'`{time}!`')
+                await leaderboardMessage.edit(embed=leaderboardEmbed)
+                await asyncio.sleep(1)
+
+            leaderboardEmbed = discord.Embed(title = 'Countdown completed!', color=0xff0000)
+            leaderboardEmbed.set_thumbnail(url='https://bit.ly/37pTkCz')
+            leaderboardEmbed.add_field(name = f'Counting down from {time}!', value = '`Go!` Good luck!')
+        
+        
 
 client.run(token.strip())
