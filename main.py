@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import datetime
 import json
+import asyncio
 
 client = commands.Bot(command_prefix = ';')
 tokenFile = open('token.txt', 'r')
@@ -50,12 +51,12 @@ async def leaderboard(ctx):
         leaderboardEmbed.add_field(name = 'Rankings', value = fullMessage)
         leaderboardEmbed.set_footer(text = 'Provide a picture in #role-request or #the-watch showing that you are level 20★ or higher and you will be added to this leaderboard!')
         await ctx.send(embed = leaderboardEmbed)
-        
+
 @client.command(name = 'leaderboardadd', aliases = ['lbadd'])
 async def leaderboardadd(ctx, playerName, playerLevelStr):
     t99Server = client.get_guild(546595455983943690)
-    leaderboardRole = t99Server.get_role(661271726792900649)
-    if leaderboardRole not in ctx.author.roles:
+    leaderboardRole = t99Server.get_role('Leaderboard Editor')
+    if leaderboardRole in ctx.author.roles == False:
         await ctx.send(f'{ctx.author.mention} You do not have permission to use that command.')
     else:
         with open('leaderboard.json', 'r+') as f:
@@ -94,8 +95,8 @@ async def leaderboardadd(ctx, playerName, playerLevelStr):
 @client.command(name='leaderboardremove', aliases=['lbremove'])
 async def leaderboardremove(ctx, playerName):
     t99Server = client.get_guild(546595455983943690)
-    leaderboardRole = t99Server.get_role(661271726792900649)
-    if leaderboardRole not in ctx.author.roles:
+    leaderboardRole = t99Server.get_role('Leaderboard Editor')
+    if leaderboardRole in ctx.author.roles == False:
         await ctx.send(f'{ctx.author.mention} You do not have permission to use that command.')
     else:
         with open('leaderboard.json', 'r+') as f:
@@ -135,7 +136,7 @@ async def countdown(ctx, time):
             leaderboardEmbed = discord.Embed(title = 'Countdown completed!', color=0xff0000)
             leaderboardEmbed.set_thumbnail(url='https://bit.ly/37pTkCz')
             leaderboardEmbed.add_field(name = f'Counting down from {time}!', value = '`Go!` Good luck!')
-        
-        
+
+
 
 client.run(token.strip())
