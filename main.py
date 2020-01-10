@@ -137,6 +137,28 @@ async def countdown(ctx, time):
             leaderboardEmbed.set_thumbnail(url='https://bit.ly/37pTkCz')
             leaderboardEmbed.add_field(name = f'Counting down from {time}!', value = '`Go!` Good luck!')
 
+@client.command(name='countdownrole',  aliases=['cdrole'])
+async def countdownrole(ctx):
+    t99Server = client.get_guild(546595455983943690)
+    countdownRole = discord.utils.get(ctx.guild.roles, name='Countdown')
+    user = ctx.message.author
+    if countdownRole in ctx.author.roles:
+        await user.remove_roles(countdownRole)
+        await ctx.send(f'The countdown command has been removed from {ctx.author}')
+    else:
+        await user.add_roles(countdownRole)
+        await ctx.send(f'The countdown command has been given to {ctx.author}')
 
+@client.command(name='pingrole', aliases=['prole'])
+async def pingrole(ctx):
+    t99Server = client.get_guild(546595455983943690)
+    pingRole = discord.utils.get(ctx.guild.roles, name='Ping')
+    user = ctx.message.author
+    if pingRole in ctx.author.roles:
+        await user.remove_roles(pingRole)
+        await ctx.send(f'The ping command has been removed from {ctx.author}')
+    else:
+        await user.add_roles(pingRole)
+        await ctx.send(f'The ping command has been given to {ctx.author}')
 
 client.run(token.strip())
