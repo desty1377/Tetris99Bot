@@ -3,6 +3,7 @@ from discord.ext import commands
 import datetime
 import json
 import asyncio
+from libneko import pag
 
 client = commands.Bot(command_prefix = ';')
 tokenFile = open('token.txt', 'r')
@@ -31,26 +32,29 @@ async def on_member_join(member):
 async def ping(ctx):
     await ctx.send(f'{ctx.author.mention} Pong!')
 
+@pag.embed_generator(max_chars=2048, provides_numbering=True)
+def leaderboard_embed(paginator, page, page_index):
+    embed = discord.Embed(title = 'Tetris 99 Level Leaderboard', color=0xff0000)
+    embed.set_thumbnail(url='https://bit.ly/37pTkCz')
+    embed.add_field(name = f'Rankings page {page_index + 1}', value = page)
+    embed.set_footer(text = 'Provide a picture in #role-request or #the-watch showing that you are level 20★ or higher and you will be added to this leaderboard!')
+    return embed
+
 @client.command(name = 'leaderboard')
 async def leaderboard(ctx):
     with open('leaderboard.json', 'r') as f:
         leaderboardFile = json.load(f)
-
         sortedDict = {k: v for k, v in sorted(leaderboardFile.items(), key=lambda item: item[1], reverse=True)}
-        counter = 1
-        fullMessage = ''
+        
+        nav = pag.EmbedNavigatorFactory(factory=leaderboard_embed, max_lines = 20)
 
-        for player in sortedDict:
-            if sortedDict[player] < 100:
-                fullMessage += f'{player} - {sortedDict[player]}★\n'
-            else:
-                fullMessage += f'{player} - {sortedDict[player] - 99}★★\n'
-
-        leaderboardEmbed = discord.Embed(title = 'Tetris 99 Level Leaderboard', color=0xff0000)
-        leaderboardEmbed.set_thumbnail(url='https://bit.ly/37pTkCz')
-        leaderboardEmbed.add_field(name = 'Rankings', value = fullMessage)
-        leaderboardEmbed.set_footer(text = 'Provide a picture in #role-request or #the-watch showing that you are level 20★ or higher and you will be added to this leaderboard!')
-        await ctx.send(embed = leaderboardEmbed)
+        for player in sortedDict:                
+            level = sortedDict[player] % 100
+            if level == 0: level += 1
+            stars = sortedDict[player] // 100 * '★'
+            nav += f'{player} - {level} {stars} \n'
+        
+        nav.start(ctx)
 
 @client.command(name = 'leaderboardadd', aliases = ['lbadd'])
 async def leaderboardadd(ctx, playerName, playerLevelStr):
