@@ -68,35 +68,31 @@ async def leaderboardadd(ctx, playerName, playerLevelStr):
     else:
         with open('leaderboard.json', 'r+') as f:
             leaderboardFile = json.load(f)
-        playerLevelInt = -99
-        playerUpdate = False
-
-        for character in playerLevelStr:
-            if character == '*':
-                playerLevelInt += 99
-
-        if playerLevelStr[-2:] == '**':
-            playerLevelInt += int(playerLevelStr[:len(playerLevelStr) - 2])
+        
+        parsedLevel = re.search(re.compile('\d+\.?\d*'), playerLevelStr)
+        if parsedLevel is not None:
+            intLevel = int(parsedLevel[0])
+            level = intLevel
+            stars = playerLevelStr.count('*') * '★'
+            intLevel += playerLevelStr.count('*') * 99
         else:
-            playerLevelInt += int(playerLevelStr[:len(playerLevelStr) - 1])
-
-        if playerName in leaderboardFile == True:
-            playerUpdate = True
-
-        leaderboardFile[playerName] = playerLevelInt
-        with open('leaderboard.json', 'w') as f:
-            json.dump(leaderboardFile, f)
-
-        if playerUpdate == False:
-            if playerLevelInt > 99:
-                await ctx.send(f'{playerName} has been successfully added to the leaderboard with level {playerLevelInt - 99}★★')
-            else:
-                await ctx.send(f'{playerName} has been successfully added to the leaderboard with level {playerLevelInt}★')
+            await ctx.send('Invalid level - must be a number or number followed by * or ** \n Example: ;lbadd PlayerName 5**')
+            return
+        
+        playerUpdate = playerName in leaderboardFile
+        leaderboardFile[playerName] = intLevel
+        
+        try:
+            with open('leaderboard.json', 'w') as f:
+                json.dump(leaderboardFile, f)
+        except:
+            await ctx.send('Error writing to leaderboard.json')
+            return
+        
+        if playerUpdate:
+            await ctx.send(f"{playerName}'s level has been updated to {level} {stars}")
         else:
-            if playerLevelInt > 99:
-                await ctx.send(f"{playerName}'s level has been updated to {playerLevelInt - 99}★★")
-            else:
-                await ctx.send(f"{playerName}'s level has been updated to {playerLevelInt}★")
+            await ctx.send(f'{playerName} has been successfully added to the leaderboard with level {level} {stars}')
 
 
 @client.command(name='leaderboardremove', aliases=['lbremove'])
