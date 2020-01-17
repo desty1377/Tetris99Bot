@@ -123,22 +123,22 @@ async def countdown(ctx, time):
         if time <= 2:
             await ctx.send(f'{ctx.author.mention} Please input a number that is 3 or larger to count down from.')
         else:
-            leaderboardEmbed = discord.Embed(title = 'Countdown', color=0xff0000)
-            leaderboardEmbed.set_thumbnail(url='https://bit.ly/37pTkCz')
-            leaderboardEmbed.add_field(name = f'Counting down from {time}!', value = 'Countdown begins in 5 seconds! Be ready!')
-            leaderboardMessage = await ctx.send(embed=leaderboardEmbed)
+            cdEmbed = discord.Embed(title = 'Countdown', color=0xff0000)
+            # cdEmbed.set_thumbnail(url='https://bit.ly/37pTkCz')
+            cdEmbed.add_field(name = f'Counting down from {time}!', value = 'Countdown begins in 5 seconds! Be ready!')
+            cdMessage = await ctx.send(embed=cdEmbed)
             await asyncio.sleep(5)
 
-            for i in range(1, time):
-                leaderboardEmbed = discord.Embed(title = 'Countdown', color=0xff0000)
-                leaderboardEmbed.set_thumbnail(url='https://bit.ly/37pTkCz')
-                leaderboardEmbed.add_field(name = f'Counting down from {time}!', value = f'`{time}!`')
-                await leaderboardMessage.edit(embed=leaderboardEmbed)
+            for i in range(time, -1, -1):
+                cdEmbed = discord.Embed(title = 'Countdown', color=0xff0000)
+                # cdEmbed.set_thumbnail(url='https://bit.ly/37pTkCz')
+                if i == 0:
+                    cdEmbed.title = 'Countdown Complete'
+                    cdEmbed.add_field(name = f'Counting down from {time}!', value = '`Go!` Good luck!')
+                else:
+                    cdEmbed.add_field(name = f'Counting down from {time}!', value = f'`{i}!`')          
+                await cdMessage.edit(embed=cdEmbed)
                 await asyncio.sleep(1)
-
-            leaderboardEmbed = discord.Embed(title = 'Countdown completed!', color=0xff0000)
-            leaderboardEmbed.set_thumbnail(url='https://bit.ly/37pTkCz')
-            leaderboardEmbed.add_field(name = f'Counting down from {time}!', value = '`Go!` Good luck!')
 
 @client.command(name='countdownrole',  aliases=['cdrole'])
 async def countdownrole(ctx):
