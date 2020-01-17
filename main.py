@@ -48,10 +48,13 @@ async def leaderboard(ctx):
         
         nav = pag.EmbedNavigatorFactory(factory=leaderboard_embed, max_lines = 20)
 
-        for player in sortedDict:                
-            level = sortedDict[player] % 100
-            if level == 0: level += 1
-            stars = sortedDict[player] // 100 * '★'
+        for player in sortedDict:
+            if sortedDict[player] % 99 == 0:
+                level = 99
+                stars = (sortedDict[player] // 99 - 1) * '★'
+            else:
+                level = sortedDict[player] % 99
+                stars = sortedDict[player] // 99 * '★'
             nav += f'{player} - {level} {stars} \n'
         
         nav.start(ctx)
