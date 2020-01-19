@@ -55,7 +55,7 @@ async def leaderboard(ctx):
             else:
                 level = sortedDict[player] % 99
                 stars = sortedDict[player] // 99 * '★'
-            nav += f'{player} - {level} {stars} \n'
+            nav += f'{player} - {level} ★{stars} \n'
         
         nav.start(ctx)
 
