@@ -25,7 +25,7 @@ async def on_member_join(member):
         #print(userSinceCreated)
         pass
     else:
-        await t99Server.ban(user=member, reason="Account is less than 48 hours old")
+        await t99Server.kick(user=member, reason="Account is less than 48 hours old")
         await modChannel.send(memberMention + '** has been kicked from the server for having an account under 48 hours old**')
 
 @client.command(name = 'ping')
